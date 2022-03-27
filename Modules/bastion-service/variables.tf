@@ -17,14 +17,14 @@ variable "tags" {
   default     = {}
 }
 
-variable "subnet_15_ID" {
+variable "subnet_id" {
   description = "ID of Bastion Service subnet"
 }
 
-variable "PublicIPName" {
+variable "name" {
   description = "The name of the PublicIPName resource being deployed"
 }
 
-variable "PublicDNSName" {
+variable "domain_name_label" {
   description = "The Public DNS Name being created"
 }

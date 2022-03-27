@@ -21,11 +21,11 @@ variable "tags" {
   default     = {}
 }
 
-variable "vm-subnet_ID" {
+variable "subnet_id" {
   description = "ID of vm VM subnet"
 }
 
-variable "vm_admin" {
+variable "admin_username" {
   description = "Admin account name for vm"
 }
 
@@ -33,7 +33,7 @@ variable "vm_name" {
   description = "name for vm"
 }
 
-variable "vm_admin_passwd" {
+variable "admin_password_secret_name" {
   description = "Admin account name for vm"
 }
 
@@ -41,20 +41,24 @@ variable "az_law_id" {
   description = "ID of azure log analytics workspace"
 }
 
-variable "az_law_psk" {
-  description = "Primary shared key of azure log analytics workspace"
-}
+// variable "az_law_psk" {
+//   description = "Primary shared key of azure log analytics workspace"
+// }
 
 variable "az_workspace_id" {
   description = "workspace_id of azure log analytics workspace"
 }
 
-variable "CoreKeyvault" {
+variable "law_key_vault_name" {
   description = "Name of common keyvault in core infra"
 }
 
-variable "CoreResourceGroup" {
+variable "law_key_vault_rg_name" {
   description = "resource group for common network components"
+}
+
+variable "law_key_name" {
+  type = string
 }
 
 variable "BuildBastionInfra" {

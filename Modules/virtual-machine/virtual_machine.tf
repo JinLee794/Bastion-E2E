@@ -1,3 +1,18 @@
+data "azurerm_key_vault" "this" {
+  name                = var.law_key_vault_name
+  resource_group_name = var.law_key_vault_rg_name
+}
+
+data "azurerm_key_vault_secret" "law-win-agent-key" {
+  name         = var.law_key_name
+  key_vault_id = data.azurerm_key_vault.this.id
+}
+
+data "azurerm_key_vault_secret" "admin_password" {
+  name         = var.admin_password_secret_name
+  key_vault_id = data.azurerm_key_vault.this.id
+}
+
 #NIC for VM
 resource "azurerm_network_interface" "vm_nic" {
   count               = var.BuildBastionInfra ? 1 : 0
@@ -7,14 +22,14 @@ resource "azurerm_network_interface" "vm_nic" {
   tags                = var.tags
 
   ip_configuration {
-    name                          = "${var.vm_name}-ip-vm-internal"
-    subnet_id                     = var.vm-subnet_ID
-    private_ip_address_allocation = "dynamic"
+    name                          = "${var.vm_name}-${var.environment}-ip-vm-internal"
+    subnet_id                     = var.subnet_id
+    private_ip_address_allocation = "Dynamic"
   }
 }
 
 #vm VM
-resource "azurerm_windows_virtual_machine" "vm-vm" {
+resource "azurerm_windows_virtual_machine" "this" {
   count                      = var.BuildBastionInfra ? 1 : 0
   name                       = "${var.vm_name}-${var.environment}"
   resource_group_name        = var.resource_group_name
@@ -25,8 +40,8 @@ resource "azurerm_windows_virtual_machine" "vm-vm" {
   enable_automatic_updates   = true
   patch_mode                 = "AutomaticByOS"
   provision_vm_agent         = true
-  admin_username             = "${var.vm_admin}-${var.environment}"
-  admin_password             = var.vm_admin_passwd
+  admin_username             = var.admin_username
+  admin_password             = data.azurerm_key_vault_secret.admin_password.value
   computer_name              = var.vm_name
   allow_extension_operations = true
   network_interface_ids = [
@@ -58,11 +73,11 @@ resource "azurerm_windows_virtual_machine" "vm-vm" {
 #  count                   = var.BuildBastionInfra ? 1 : 0
 #  resource_group_name     = var.resource_group_name_components
 #  automation_account_name = var.bastion_automation_name
-#  schedule_name           = "Install Windows Updates on bastion ${azurerm_windows_virtual_machine.vm-vm[0].name}"
+#  schedule_name           = "Install Windows Updates on bastion ${azurerm_windows_virtual_machine.this[0].name}"
 #  runbook_name            = "Patch-MicrosoftOMSComputers"
 
 #  parameters = {
 #    resourcegroup = var.resource_group_name
-#    vmname        = azurerm_windows_virtual_machine.vm-vm[0].name
+#    vmname        = azurerm_windows_virtual_machine.this[0].name
 #  }
 #}

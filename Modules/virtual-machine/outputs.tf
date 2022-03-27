@@ -3,9 +3,9 @@ output "private_ip_address" {
 }
 
 output "vm_id" {
-  value = azurerm_windows_virtual_machine.vm-vm[0].id
+  value = azurerm_windows_virtual_machine.this[0].id
 }
 
 output "vm_name" {
-  value = azurerm_windows_virtual_machine.vm-vm[0].name
+  value = azurerm_windows_virtual_machine.this[0].name
 }

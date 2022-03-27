@@ -1,77 +1,51 @@
 variable "resource_group_name" {
-  description = "The name of the resource group."
+  type        = string
+  description = "The name of the resource group in which to create the NSGs."
 }
 
 variable "location" {
-  description = "The location to deploy resources to."
+  type        = string
+  description = "The name of the resource group in which to create the NSGs."
 }
 
-variable "tags" {
-  description = "Tags to apply to resources."
+variable "nsg_additional_tags" {
   type        = map(string)
+  description = "Additional Network Security Group resources tags, in addition to the resource group tags."
   default     = {}
 }
 
-variable "NSG1Name" {
-  description = "Network Security Group for NSG1"
+# -
+# - Network Security Group object
+# -
+variable "network_security_groups" {
+  type = map(object({
+    name                      = string
+    tags                      = map(string)
+    subnet_id                  = string
+    networking_resource_group = string
+    security_rules = list(object({
+      name                                         = string
+      description                                  = string
+      protocol                                     = string
+      direction                                    = string
+      access                                       = string
+      priority                                     = number
+      source_address_prefix                        = string
+      destination_address_prefix                   = string
+      source_port_range                            = string
+      source_port_ranges                           = list(string)
+      destination_port_range                       = string
+      destination_port_ranges                      = list(string)
+    }))
+  }))
+  description = "The network security groups with their properties."
+  default     = {}
 }
 
-variable "NSG2Name" {
-  description = "Network Security Group for NSG2"
-}
-
-variable "NSG3Name" {
-  description = "Network Security Group for NSG3"
-}
-
-variable "NSG4Name" {
-  description = "Network Security Group for NSG4"
-}
-
-variable "NSG5Name" {
-  description = "Network Security Group for NSG5"
-}
-
-variable "NSG6Name" {
-  description = "Network Security Group for NSG6"
-}
-
-variable "NSG7Name" {
-  description = "Network Security Group for NSG7"
-}
-
-variable "NSG10Name" {
-  description = "Network Security Group for NSG10"
-}
-
-variable "NSG11Name" {
-  description = "Network Security Group for NSG11"
-}
-
-variable "NSG12Name" {
-  description = "Network Security Group for NSG12"
-}
-
-variable "NSG13Name" {
-  description = "Network Security Group for NSG13"
-}
-
-variable "NSG14Name" {
-  description = "Network Security Group for NSG14"
-}
-
-variable "NSG15Name" {
-  description = "Network Security Group for NSG15"
-}
-
-variable "NSG16Name" {
-  description = "Network Security Group for NSG16"
-}
-
-variable "NSG17Name" {
-  description = "Network Security Group for NSG17"
-}
-
-variable "NSG18Name" {
-  description = "Network Security Group for NSG18"
+############################
+# State File
+############################
+variable ackey {
+  description = "Not required if MSI is used to authenticate to the SA where state file is"
+  default     = null
 }

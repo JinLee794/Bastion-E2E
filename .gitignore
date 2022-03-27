@@ -1,2 +1,9 @@
 *.tfvars
-config/
+.terragrunt-cache
+.terraform.lock.hcl
+.env
+*.env
+.devcontainer
+
+.terraform
+_unused

@@ -4,39 +4,7 @@
 # remote state, and locking: https://github.com/gruntwork-io/terragrunt
 # ---------------------------------------------------------------------------------------------------------------------
 
-# Define required variable files
 terraform {
-  required_providers {
-    azurerm = {
-      source  = "hashicorp/azurerm"
-      version = ">=2.51.0"
-    }
-  }
-}
-
-locals {
-  # Load the site and environment-level shared values
-  common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
-
-  # Extract the variables we need for easy access
-  tenant_id = local.common_vars.locals.tenant_id
-
-  # TODO: Do further planning on multi-tenant/region scenarios
-  backend_subscription_id             = local.common_vars.locals.backend_subscription_id
-  backend_storage_resource_group_name = local.common_vars.locals.backend_storage_resource_group_name
-  backend_storage_account_name        = local.common_vars.locals.backend_storage_account_name
-
-  # Load the layer-level shared values
-  layer_vars = read_terragrunt_config(find_in_parent_folders("layer.hcl"))
-
-
-  # Extract the ENV value from the environment; default to dev
-  env      = get_env("ENV", "dev")
-  env_vars = read_terragrunt_config(find_in_parent_folders("${local.env}.hcl"))
-
-  # Pull in Service Principal credentials from the environment
-  # client_secret = get_env("ARM_CLIENT_SECRET")
-  key = "${path_relative_to_include()}/${local.env}/terraform.tfstate"
 }
 
 # Generate an Azure provider block
@@ -50,6 +18,26 @@ provider "azurerm" {
 }
 EOF
 }
+
+locals {
+  # Load the site and environment-level shared values
+  common_vars = read_terragrunt_config(find_in_parent_folders("common.hcl"))
+  tenant_id = local.common_vars.locals.tenant_id
+
+  # Load backend configuration from the scoped common.hcl configuration file
+  backend_subscription_id             = local.common_vars.locals.backend_subscription_id
+  backend_storage_resource_group_name = local.common_vars.locals.backend_storage_resource_group_name
+  backend_storage_account_name        = local.common_vars.locals.backend_storage_account_name
+  layer_vars = read_terragrunt_config(find_in_parent_folders("layer.hcl"))
+
+  # Load environment variable file for the scoped environment based on ENV environment variable
+  env      = get_env("ENV", "uat")
+  env_vars = read_terragrunt_config(find_in_parent_folders("${local.env}.hcl"))
+
+  # Configure the backend key to remotely store state files
+  key = "${path_relative_to_include()}/${local.env}/terraform.tfstate"
+}
+
 
 # Configure Terragrunt to automatically store tfstate files in an Blob Storage container
 remote_state {
@@ -79,8 +67,4 @@ inputs = merge(
   local.common_vars.locals,
   local.env_vars.locals,
   local.layer_vars.locals
-
-  #   {
-  #     client_secret = local.client_secret
-  #   }
 )

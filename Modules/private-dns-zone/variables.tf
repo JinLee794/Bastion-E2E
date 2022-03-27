@@ -20,8 +20,9 @@ variable "vnet_name" {
   description = "The name of the virtual network to create zone in"
 }
 
-variable "private_dns_zone" {
+variable "private_dns_zones" {
   description = "The FQDN of the zone to create"
+  type = map
 }
 
 variable "registration_enabled" {

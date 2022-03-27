@@ -31,19 +31,20 @@ variable "enable_logs_collection" {
   default     = true
 }
 
-variable "enable_metrics_collection" {
-  description = "Trigger to enable collecting of metrics."
-  default     = true
-}
-
-variable "log_analytics_workspace_id" {
-  description = "ID of log analytics workspace for logging"
-}
-
-variable "metrics_log_analytics_workspace_id" {
-  description = "ID of log analytics workspace for metrics"
-}
 
 variable "az_law_id" {
   description = "resource ID of log analytics workspace"
 }
+
+// variable "log_analytics_workspace_id" {
+//   description = "ID of log analytics workspace for logging"
+// }
+
+// variable "enable_metrics_collection" {
+//   description = "Trigger to enable collecting of metrics."
+//   default     = true
+// }
+
+// variable "metrics_log_analytics_workspace_id" {
+//   description = "ID of log analytics workspace for metrics"
+// }

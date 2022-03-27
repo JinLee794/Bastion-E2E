@@ -14,21 +14,30 @@ variable "tags" {
 }
 
 #Virtual Network
-variable "vnet_name" {
+variable "name" {
   description = "The name of the virtual network"
 }
 
-variable "vnet_CIDR" {
+variable "address_space" {
   description = "The CIDR of the virtual network"
+  type = list(string)
 }
 
 variable "dns_servers" {
   description = "The DNS servers for the virtual network"
-}
-variable "CoreResourceGroup" {
-  description = "Name of resource group containing core resources"
+  default = []
 }
 
-variable "DDoSPlanName" {
-  description = "Name of DDoS plan for this vnet"
+variable "subnets" {
+  description = "The DNS servers for the virtual network"
+  type = map
 }
+
+
+// variable "CoreResourceGroup" {
+//   description = "Name of resource group containing core resources"
+// }
+
+// variable "DDoSPlanName" {
+//   description = "Name of DDoS plan for this vnet"
+// }

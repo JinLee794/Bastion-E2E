@@ -9,7 +9,7 @@ resource "azurerm_automation_account" "bastion_automation" {
 # Link automation account to a Log Analytics Workspace.
 # Only deployed if enable_update_management and/or enable_change_tracking are/is set to true
 resource "azurerm_log_analytics_linked_service" "law_link" {
-  count               = var.enable_update_management || var.enable_change_tracking ? 1 : 0
+  // count               = var.enable_update_management || var.enable_change_tracking ? 1 : 0
   resource_group_name = var.resource_group_name
   workspace_id        = var.az_law_id
   #linked_service_name = "automation"
@@ -20,7 +20,7 @@ resource "azurerm_log_analytics_linked_service" "law_link" {
 # Add Updates workspace solution to log analytics if enable_update_management is set to true.
 # Adding this solution to the log analytics workspace, combined with above linked service resource enables update management for the automation account.
 resource "azurerm_log_analytics_solution" "law_solution_updates" {
-  count               = var.enable_update_management
+  // count               = var.enable_update_management
   resource_group_name = var.resource_group_name
   location            = var.location
 
@@ -38,7 +38,7 @@ resource "azurerm_log_analytics_solution" "law_solution_updates" {
 # Add Updates workspace solution to log analytics if enable_change_tracking is set to true.
 # Adding this solution to the log analytics workspace, combined with above linked service resource enables Change Tracking and Inventory for the automation account.
 resource "azurerm_log_analytics_solution" "law_solution_change_tracking" {
-  count               = var.enable_change_tracking
+  // count               = var.enable_change_tracking
   resource_group_name = var.resource_group_name
   location            = var.location
 
@@ -51,6 +51,9 @@ resource "azurerm_log_analytics_solution" "law_solution_change_tracking" {
     product   = "OMSGallery/ChangeTracking"
   }
 }
+
+
+
 
 
 # Send logs to Log Analytics

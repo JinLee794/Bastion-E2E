@@ -1,0 +1,47 @@
+# ---------------------------------------------------------------------------------------------------------------------
+# TERRAGRUNT CONFIGURATION
+# This is the configuration for Terragrunt, a thin wrapper for Terraform that helps keep your code DRY and
+# maintainable: https://github.com/gruntwork-io/terragrunt
+# ---------------------------------------------------------------------------------------------------------------------
+
+# We override the terraform block source attribute here just for the QA environment to show how you would deploy a
+# different version of the module in a specific environment.
+terraform {
+  # source = "${local.module_repository}//key-vault?ref=${local.module_repository_version}"
+  source = "${local.module_repository}//automation-account"
+}
+
+// dependency "resource_group"{
+//   config_path = "../resource-group"
+//   mock_outputs = {
+//     name = "bootstrap"
+//   }
+// }
+
+// dependency "virtual_network"{
+//   config_path = "../../Network/virtual-network"
+//   mock_outputs = {
+//     name = "hub"
+//     id = ""
+//     map_subnets = {}
+//   }
+// }
+
+include {
+  path = find_in_parent_folders()
+}
+
+locals {
+  common_vars       = read_terragrunt_config(find_in_parent_folders("common.hcl"))
+  module_repository = local.common_vars.locals.module_repository
+
+  layer_vars = read_terragrunt_config(find_in_parent_folders("layer.hcl"))
+  layer_name = local.layer_vars.locals.layer_name
+
+  env = get_env("ENV", "uat")
+}
+
+inputs = {
+  resource_group_name = "bootstrap"
+  name                = "${local.layer_name}-${local.env}-aa"
+}
