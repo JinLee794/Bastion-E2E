@@ -1,9 +1,9 @@
 # wait after VM is up to deploy the qualys agent to it
-// resource "time_sleep" "wait" {
-//   count           = var.BuildBastionInfra ? 1 : 0
-//   depends_on      = [azurerm_windows_virtual_machine.this[0]]
-//   create_duration = "360s"
-// }
+resource "time_sleep" "wait" {
+  count           = var.BuildBastionInfra ? 1 : 0
+  depends_on      = [azurerm_windows_virtual_machine.this[0]]
+  create_duration = "360s"
+}
 
 ## 1
 #Guest Configuration extension for Windows
@@ -15,7 +15,7 @@ resource "azurerm_virtual_machine_extension" "ConfigurationforWindows" {
   type                       = "ConfigurationforWindows"
   type_handler_version       = "1.29"
   auto_upgrade_minor_version = true
-  // depends_on                 = [time_sleep.wait[0]]
+  depends_on                 = [time_sleep.wait[0]]
   timeouts {
     create = "90m"
     delete = "90m"
@@ -25,16 +25,15 @@ resource "azurerm_virtual_machine_extension" "ConfigurationforWindows" {
 ## 2
 #Security vulnerability assessment
 # add qualys agent to VM
-// Jin - Disabling for now as my subsciprtion does not have the enhanced-security plan
-// resource "azurerm_security_center_server_vulnerability_assessment" "qualys" {
-//   count              = var.BuildBastionInfra ? 1 : 0
-//   virtual_machine_id = azurerm_windows_virtual_machine.this[0].id
-//   depends_on         = [azurerm_virtual_machine_extension.ConfigurationforWindows]
-//   timeouts {
-//     create = "90m"
-//     delete = "90m"
-//   }
-// }
+resource "azurerm_security_center_server_vulnerability_assessment" "qualys" {
+  count              = var.BuildBastionInfra ? 1 : 0
+  virtual_machine_id = azurerm_windows_virtual_machine.this[0].id
+  depends_on         = [azurerm_virtual_machine_extension.ConfigurationforWindows]
+  timeouts {
+    create = "90m"
+    delete = "90m"
+  }
+}
 
 // #generate random to force null resources to trigger every time
 // resource "random_id" "random" {
